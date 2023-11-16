@@ -1,0 +1,39 @@
+version: '3'
+services:
+  etl:
+    build:
+      context: ./etl
+      dockerfile: Dockerfile-etl
+    env_file:
+      - ./etl/etl.env
+    depends_on:
+      - db
+      - elastic
+      - fastapi
+    volumes:
+      - ./etl:/app/etl
+
+  db:
+    build:
+      context: .
+      dockerfile: init_db/Dockerfile-db
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  elastic:
+    image: elasticsearch:8.6.2
+    environment:
+      - "ES_JAVA_OPTS=-Xms200m -Xmx200m"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"  # для прода данный параметр удалить
+    ports:
+      - "9200:9200"  # необходимо для ETL в рамках разработки
+
+volumes:
+  pgdata:
