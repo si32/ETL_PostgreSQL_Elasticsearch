@@ -16,7 +16,7 @@ from transformer import Transformer
 from loader import ElasticsearchLoader
 
 
-# Время между заспуском очередного etl процесса (секунды)
+# Время между запуском очередного etl процесса (секунды)
 REFRESH = 10
 
 
