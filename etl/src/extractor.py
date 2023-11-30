@@ -4,12 +4,15 @@ from helper import logger
 from sql_queries import sql_genres, sql_persons
 
 
+SCHEMAS = ('genres', 'persons', 'movies')
+
+
 class PostgresExtractor:
     """Класс для работы с базой данной Postgres"""
 
     def __init__(self, connection: _connection, schema: str) -> None:
         self.conn = connection
-        if schema in ('genres', 'persons'):
+        if schema in SCHEMAS:
             self.schema = schema
         else:
             raise ValueError(

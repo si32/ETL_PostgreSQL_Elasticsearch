@@ -7,12 +7,15 @@ from requests.exceptions import RequestException
 from helper import logger
 
 
-class ElasticsearchLoader():
+SCHEMAS = ('genres', 'persons', 'movies')
+
+
+class ElasticsearchLoader:
     """Клас для загрузки данных в Elasticsearch."""
 
     def __init__(self, es_url: str, schema: str):
         self.es_url = es_url
-        if schema in ('genres', 'persons'):
+        if schema in SCHEMAS:
             self.schema = schema
         else:
             raise ValueError(
@@ -20,10 +23,7 @@ class ElasticsearchLoader():
 
     def check_es_schema_exist(self) -> None:
         """Метод проверки существования/создания схемы в Elasticsearch."""
-        if self.schema == 'genres':
-            r = requests.get(f'{self.es_url}/genres/_mapping')
-        elif self.schema == 'persons':
-            r = requests.get(f'{self.es_url}/persons/_mapping')
+        r = requests.get(f'{self.es_url}/{self.schema}/_mapping')
 
         if r.status_code != 200:
             try:
@@ -39,7 +39,7 @@ class ElasticsearchLoader():
                 logger.error(f'{self.__class__.__name__}: {e}')
 
     def save_data(self, batch_records: str) -> None:
-        """Медод записи пачки записей в Elasticsearch."""
+        """Метод записи пачки записей в Elasticsearch."""
         try:
             r = requests.post(
                 f'{self.es_url}/_bulk', headers={'Content-Type': 'application/json'}, data=batch_records.encode('utf-8'))
