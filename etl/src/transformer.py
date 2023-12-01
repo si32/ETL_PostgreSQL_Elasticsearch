@@ -3,7 +3,7 @@ import json
 from pydantic_classes import Genre, Person
 
 
-class Transformer():
+class Transformer:
     """Класс для валидации данных из Postgres и приведения к формату для загрузки в Elasticsearch."""
 
     def __init__(self, schema: str):
